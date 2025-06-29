@@ -1,6 +1,6 @@
 name: IRIS ML Pipeline
 
-on:
+on:  [push, pull_request]
   pull_request:
     branches: [ main ]
 
