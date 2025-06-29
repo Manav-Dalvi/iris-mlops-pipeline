@@ -1,0 +1,38 @@
+name: IRIS ML Pipeline
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  train-and-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run training
+        run: python3 src/train.py
+
+      - name: Run evaluation and capture report
+        run: |
+          python3 src/evaluate.py > report.txt
+
+      - name: Post CML Report as PR Comment
+        uses: iterative/cml@v2
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          markdown: report.txt
+
